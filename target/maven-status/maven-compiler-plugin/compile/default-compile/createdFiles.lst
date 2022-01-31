@@ -1,0 +1,5 @@
+utils\SoccerUtils.class
+enums\ClubFields.class
+dtos\TimeDTO.class
+dtos\ClassificacaoDTO.class
+SoccerMainApllication.class

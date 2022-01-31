@@ -15,18 +15,23 @@ public class SoccerMainApllication {
 
     public static void main(String[] args) throws IOException {
 
-        Files.lines(SoccerUtils.getPath("times"), StandardCharsets.UTF_8)
-                .filter(StringUtils::isNotBlank)
-                .map(field ->
+        Files.lines(SoccerUtils.getPath("CollectionsClubs"), StandardCharsets.UTF_8)
+                /* Sugestão: Fazer aqui um filter removendo possiveis headers */
+                .filter(StringUtils::isNotBlank) /*Removendo Linhas em brancas*/
+                .distinct() /* Removendo linhas repetidas */
+                .map(field -> /* Formartando linha para TimedTO */
                         new ObjectMapper().convertValue(SoccerUtils.convertToMap(field.split(";")), TimeDTO.class)
-                ).sorted(Comparator.comparing(TimeDTO::getDataHora))//.collect(Collectors.toList())
+                ).sorted(Comparator.comparing(TimeDTO::getDataHora))/* Ordenando baseado no DataHora */
 
                 //Subdivida a estrutura de dados por time (mandante)
                 .collect(
                         Collectors.groupingBy( TimeDTO::getMandante ))
                 .forEach((key,dtos) -> {
                     try {
+                        /* Imprimindo o histórico de cada time */
                         Files.write(SoccerUtils.getPath(key), SoccerUtils.convertToListString(dtos), StandardCharsets.UTF_8);
+                        /* Imprimindo o csv de classificação */
+                        /* Sugestão: Fazer uma lista e após a conclusão, ordernar pela pontuação total e imprimir. */
                         Files.write(SoccerUtils.getPath("Classificacao"), List.of(SoccerUtils.getClassificacao(dtos, key).toString()), StandardCharsets.UTF_8, StandardOpenOption.APPEND);
                     } catch (IOException e) {
                         e.printStackTrace();
