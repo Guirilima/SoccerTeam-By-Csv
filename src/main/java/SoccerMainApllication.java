@@ -1,4 +1,5 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dtos.ClassificacaoDTO;
 import dtos.TimeDTO;
 import org.apache.commons.lang3.StringUtils;
 import utils.SoccerUtils;
@@ -7,6 +8,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,28 +18,40 @@ public class SoccerMainApllication {
 
     public static void main(String[] args) throws IOException {
 
-        Files.lines(SoccerUtils.getPath("CollectionsClubs"), StandardCharsets.UTF_8)
-                /* Sugestão: Fazer aqui um filter removendo possiveis headers */
+        List<ClassificacaoDTO> classificacao = new ArrayList<>();
+
+        Files.lines(SoccerUtils.getPath("brasileirao"), StandardCharsets.UTF_8)
                 .filter(StringUtils::isNotBlank) /*Removendo Linhas em brancas*/
                 .distinct() /* Removendo linhas repetidas */
-                .map(field -> /* Formartando linha para TimedTO */
+                .map(field -> /* Formatando linha para TimedTO */
                         new ObjectMapper().convertValue(SoccerUtils.convertToMap(field.split(";")), TimeDTO.class)
-                ).sorted(Comparator.comparing(TimeDTO::getDataHora))/* Ordenando baseado no DataHora */
+                ).sorted(Comparator.comparing(TimeDTO::getDay, Comparator.reverseOrder()))/* Ordenando baseado no DataHora */
 
                 //Subdivida a estrutura de dados por time (mandante)
                 .collect(
-                        Collectors.groupingBy( TimeDTO::getMandante ))
+                        Collectors.groupingBy( TimeDTO::getHome ))
                 .forEach((key,dtos) -> {
                     try {
                         /* Imprimindo o histórico de cada time */
                         Files.write(SoccerUtils.getPath(key), SoccerUtils.convertToListString(dtos), StandardCharsets.UTF_8);
-                        /* Imprimindo o csv de classificação */
-                        /* Sugestão: Fazer uma lista e após a conclusão, ordernar pela pontuação total e imprimir. */
-                        Files.write(SoccerUtils.getPath("Classificacao"), List.of(SoccerUtils.getClassificacao(dtos, key).toString()), StandardCharsets.UTF_8, StandardOpenOption.APPEND);
                     } catch (IOException e) {
                         e.printStackTrace();
+                    } finally {
+                        classificacao.add(SoccerUtils.getClassificacao(dtos, key));
                     }
                 });
+
+        classificacao.stream().sorted(Comparator.comparing(ClassificacaoDTO::getPoints, Comparator.reverseOrder()).thenComparing(ClassificacaoDTO::getWins,Comparator.reverseOrder()))
+                .map(time -> time.toString()). forEach(time -> {
+            try {
+                if(!Files.exists(SoccerUtils.getPath("Classificacao"))){
+                    Files.createFile(SoccerUtils.getPath("Classificacao"));
+                }
+                Files.write(SoccerUtils.getPath("Classificacao"), Collections.singleton(time), StandardCharsets.UTF_8, StandardOpenOption.APPEND);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     /**

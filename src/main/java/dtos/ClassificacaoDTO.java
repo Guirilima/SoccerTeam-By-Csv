@@ -9,25 +9,25 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ClassificacaoDTO {
 
-    private String time;
+    private String nameClub;
 
-    private Integer vitorias;
+    private Integer wins;
 
-    private Integer empates;
+    private Integer draws;
 
-    private Integer derrotas;
+    private Integer defeats;
 
-    private Integer pontos;
+    private Integer points;
 
     public ClassificacaoDTO() {
-        this.pontos = 0;
-        this.empates = 0;
-        this.vitorias = 0;
-        this.derrotas = 0;
+        this.points = 0;
+        this.draws = 0;
+        this.wins = 0;
+        this.defeats = 0;
     }
 
     @Override
     public String toString() {
-        return time + ';' + vitorias + ';' + empates + ';' + derrotas + ';' + pontos;
+        return nameClub + ';' + wins + ';' + draws + ';' + defeats + ';' + points;
     }
 }

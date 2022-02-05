@@ -5,24 +5,42 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class TimeDTO {
 
-    private String mandante;
+    private String home;
 
-    private String visitante;
+    private String visitor;
 
-    private String placar_mandante;
+    private String homeScoreboard;
 
-    private String placar_visitante;
+    private String visitorsScoreboard;
 
-    private String dataHora;
+    private LocalDate day;
 
     @Override
     public String toString() {
-        return mandante + ';' + visitante + ';' + placar_mandante + ';' + placar_visitante + ';' + dataHora;
+        return home + ';' + visitor + ';' + homeScoreboard + ';' + visitorsScoreboard + ';' + day;
     }
+
+    public void setDay(String dataHora) {
+        try {
+            this.day = LocalDate.parse(this.getDate(dataHora), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        }catch (Exception e) {
+            //Exception
+        }
+    }
+
+    private String getDate(String dateStr) {
+        return dateStr.substring(0,2) + "/" +
+                dateStr.substring(3,5) + "/" +
+                dateStr.substring(6,10);
+    }
+
 }

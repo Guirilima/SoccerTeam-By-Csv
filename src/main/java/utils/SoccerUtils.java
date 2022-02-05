@@ -31,16 +31,16 @@ public class SoccerUtils {
 
     public static ClassificacaoDTO getClassificacao(List<TimeDTO> dtos, String nameTime) {
         ClassificacaoDTO classificacaoDTO = new ClassificacaoDTO();
-        classificacaoDTO.setTime(nameTime);
+        classificacaoDTO.setNameClub(nameTime);
         dtos.stream().parallel().forEach(dto -> {
-            if(Integer.parseInt(dto.getPlacar_mandante()) > Integer.parseInt(dto.getPlacar_visitante())) {
-                classificacaoDTO.setVitorias(classificacaoDTO.getVitorias() + 1);
-                classificacaoDTO.setPontos(classificacaoDTO.getPontos() + 3);
-            } else if (Integer.parseInt(dto.getPlacar_mandante()) < Integer.parseInt(dto.getPlacar_visitante())) {
-                classificacaoDTO.setDerrotas(classificacaoDTO.getDerrotas() + 1);
+            if(Integer.parseInt(dto.getHomeScoreboard()) > Integer.parseInt(dto.getVisitorsScoreboard())) {
+                classificacaoDTO.setWins(classificacaoDTO.getWins() + 1);
+                classificacaoDTO.setPoints(classificacaoDTO.getPoints() + 3);
+            } else if (Integer.parseInt(dto.getHomeScoreboard()) < Integer.parseInt(dto.getVisitorsScoreboard())) {
+                classificacaoDTO.setDefeats(classificacaoDTO.getDefeats() + 1);
             } else {
-                classificacaoDTO.setEmpates(classificacaoDTO.getEmpates() + 1);
-                classificacaoDTO.setPontos(classificacaoDTO.getPontos() + 1);
+                classificacaoDTO.setDraws(classificacaoDTO.getDraws() + 1);
+                classificacaoDTO.setPoints(classificacaoDTO.getPoints() + 1);
             }
         });
         return classificacaoDTO;

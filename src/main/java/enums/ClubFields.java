@@ -9,11 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public enum ClubFields {
 
-    MANDANTE("mandante", 0),
-    VISITANTE("visitante", 1),
-    PLACAR_MANDANTE("placar_mandante", 2),
-    PLACAR_VISITANTE("placar_visitante", 3),
-    DATAHORA("dataHora", 4);
+    MANDANTE("home", 0),
+    VISITANTE("visitor", 1),
+    PLACAR_MANDANTE("homeScoreboard", 2),
+    PLACAR_VISITANTE("visitorsScoreboard", 3),
+    DATAHORA("day", 4);
 
     private String description;
     private Integer index;
