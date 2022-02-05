@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 public class SoccerUtils {
 
+    /* Method for converting string array to map */
     public static Map<String, String> convertToMap(String[] splitString) {
         Map<String, String> map = new HashMap<>();
         for (int i = 0; i < splitString.length; i++) {
@@ -21,18 +22,21 @@ public class SoccerUtils {
         return map;
     }
 
+    /* Method for universal use of file path */
     public static Path getPath(String nameFile) {
         return Paths.get("src/main/resources/" + nameFile + ".csv");
     }
 
+    /* Method used to convert entitlement to string */
     public static List<String> convertToListString(List<TimeDTO> dtos) {
         return dtos.stream().map(TimeDTO::toString).collect(Collectors.toList());
     }
 
+    /* Method used to convert entitlement to string */
     public static ClassificacaoDTO getClassificacao(List<TimeDTO> dtos, String nameTime) {
         ClassificacaoDTO classificacaoDTO = new ClassificacaoDTO();
         classificacaoDTO.setNameClub(nameTime);
-        dtos.stream().parallel().forEach(dto -> {
+        dtos.forEach(dto -> {
             if(Integer.parseInt(dto.getHomeScoreboard()) > Integer.parseInt(dto.getVisitorsScoreboard())) {
                 classificacaoDTO.setWins(classificacaoDTO.getWins() + 1);
                 classificacaoDTO.setPoints(classificacaoDTO.getPoints() + 3);

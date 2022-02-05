@@ -7,9 +7,7 @@ import utils.SoccerUtils;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,23 +34,19 @@ public class SoccerMainApllication {
                         Files.write(SoccerUtils.getPath(key), SoccerUtils.convertToListString(dtos), StandardCharsets.UTF_8);
                     } catch (IOException e) {
                         e.printStackTrace();
-                    } finally {
-                        classificacao.add(SoccerUtils.getClassificacao(dtos, key));
                     }
+
+                    classificacao.add(SoccerUtils.getClassificacao(dtos, key));
                 });
 
-        classificacao.stream().sorted(Comparator.comparing(ClassificacaoDTO::getPoints, Comparator.reverseOrder()).thenComparing(ClassificacaoDTO::getWins,Comparator.reverseOrder()))
-                .map(time -> time.toString()). forEach(time -> {
-            try {
-                if(!Files.exists(SoccerUtils.getPath("Classificacao"))){
-                    Files.createFile(SoccerUtils.getPath("Classificacao"));
-                }
-                Files.write(SoccerUtils.getPath("Classificacao"), Collections.singleton(time), StandardCharsets.UTF_8, StandardOpenOption.APPEND);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        var listClassificacao = classificacao.stream()
+                .sorted(Comparator.comparing(ClassificacaoDTO::getPoints, Comparator.reverseOrder()).thenComparing(ClassificacaoDTO::getWins,Comparator.reverseOrder()))
+                .map(time -> time.toString()).collect(Collectors.toList());
+
+        Files.write(SoccerUtils.getPath("Classificacao"), listClassificacao, StandardCharsets.UTF_8);
+
     }
+
 
     /**
      * Segue a descrição do projeto:
