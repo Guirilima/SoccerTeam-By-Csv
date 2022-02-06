@@ -11,7 +11,7 @@ import static utils.SoccerUtils.LINE;
 @Setter
 @Getter
 @AllArgsConstructor
-public class ClassificacaoDTO {
+public class ClassificationDTO {
 
     private String nameClub;
 
@@ -23,7 +23,7 @@ public class ClassificacaoDTO {
 
     private Integer points;
 
-    public ClassificacaoDTO() {
+    public ClassificationDTO() {
         this.points = 0;
         this.draws = 0;
         this.wins = 0;

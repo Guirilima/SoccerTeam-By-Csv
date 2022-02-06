@@ -1,17 +1,25 @@
 package utils;
 
-import dtos.ClassificacaoDTO;
-import dtos.TimeDTO;
+import dtos.ClassificationDTO;
+import dtos.ClubDTO;
 import enums.ClubFields;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class SoccerUtils {
+
+    public static final int WIN_POINTS = 3;
+    public static final int DRAW_POINTS = 1;
+    public static final String RESOURCES_PATH = "src/main/resources/";
+    public static final String CSV_TYPE = ".csv";
+    public static final String TEAM_HEADER= "|    Time - Mandante   |    Time - Visitante  |     Placar    |     Data   |";
+    public static final String CLASSIFICATION_HEADER= "|         Time         |  V |  E | D  = Pts|";
 
     public static final String OPEN_LINE = "| ";
     public static final String INTER_LINE = " | ";
@@ -29,29 +37,31 @@ public class SoccerUtils {
 
     /* Method for universal use of file path */
     public static Path getPath(String nameFile) {
-        return Paths.get("src/main/resources/" + nameFile + ".csv");
+        return Paths.get(RESOURCES_PATH + nameFile + CSV_TYPE);
     }
 
     /* Method used to convert entitlement to string */
-    public static List<String> convertToListString(List<TimeDTO> dtos) {
-        return dtos.stream().map(TimeDTO::toString).collect(Collectors.toList());
+    public static <G> List<String> convertToListString(Collection<G> dtos, String header) {
+        List<String> collect = dtos.stream().map(G::toString).collect(Collectors.toList());
+        collect.add(0,header);
+        return collect;
     }
 
     /* Method used to convert entitlement to string */
-    public static ClassificacaoDTO getClassificacao(List<TimeDTO> dtos, String nameTime) {
-        ClassificacaoDTO classificacaoDTO = new ClassificacaoDTO();
-        classificacaoDTO.setNameClub(nameTime);
+    public static ClassificationDTO getClassification(List<ClubDTO> dtos, String nameTime) {
+        ClassificationDTO classificationDTO = new ClassificationDTO();
+        classificationDTO.setNameClub(nameTime);
         dtos.forEach(dto -> {
             if(Integer.parseInt(dto.getHomeScoreboard()) > Integer.parseInt(dto.getVisitorsScoreboard())) {
-                classificacaoDTO.setWins(classificacaoDTO.getWins() + 1);
-                classificacaoDTO.setPoints(classificacaoDTO.getPoints() + 3);
+                classificationDTO.setWins(classificationDTO.getWins() + DRAW_POINTS);
+                classificationDTO.setPoints(classificationDTO.getPoints() + WIN_POINTS);
             } else if (Integer.parseInt(dto.getHomeScoreboard()) < Integer.parseInt(dto.getVisitorsScoreboard())) {
-                classificacaoDTO.setDefeats(classificacaoDTO.getDefeats() + 1);
+                classificationDTO.setDefeats(classificationDTO.getDefeats() + DRAW_POINTS);
             } else {
-                classificacaoDTO.setDraws(classificacaoDTO.getDraws() + 1);
-                classificacaoDTO.setPoints(classificacaoDTO.getPoints() + 1);
+                classificationDTO.setDraws(classificationDTO.getDraws() + DRAW_POINTS);
+                classificationDTO.setPoints(classificationDTO.getPoints() + DRAW_POINTS);
             }
         });
-        return classificacaoDTO;
+        return classificationDTO;
     }
 }

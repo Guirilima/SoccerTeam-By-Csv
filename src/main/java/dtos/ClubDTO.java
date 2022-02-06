@@ -18,7 +18,7 @@ import static utils.SoccerUtils.LINE;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TimeDTO {
+public class ClubDTO {
 
     private String home;
 
@@ -45,7 +45,7 @@ public class TimeDTO {
     /* Method to populate the day field */
     public void setDay(String dataHora) {
         try {
-            this.day = LocalDate.parse(this.getDate(dataHora), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            this.day = LocalDate.parse(this.getDate(dataHora), DateTimeFormatter.ofPattern("yyyy/MM/dd"));
         }catch (Exception e) {
             throw new IllegalArgumentException("Data inserida incorretamente. " +
                     " Visitante {" + visitor + "} " +
@@ -55,9 +55,9 @@ public class TimeDTO {
 
     /* Method to populate the day field */
     private String getDate(String dateStr) {
-        return dateStr.substring(0,2) + "/" +
-                dateStr.substring(3,5) + "/" +
-                dateStr.substring(6,10);
+        return dateStr.substring(0,4) + "/" +
+                dateStr.substring(5,7) + "/" +
+                dateStr.substring(8,10);
     }
 
 }
