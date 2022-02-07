@@ -64,4 +64,20 @@ public class SoccerUtils {
         });
         return classificationDTO;
     }
+
+    public static ClassificationDTO getClassification(ClubDTO dto, String nameTime) {
+        ClassificationDTO classificationDTO = new ClassificationDTO();
+        classificationDTO.setNameClub(nameTime);
+        if(Integer.parseInt(dto.getVisitorsScoreboard()) > Integer.parseInt(dto.getHomeScoreboard())) {
+            classificationDTO.setWins(classificationDTO.getWins() + DRAW_POINTS);
+            classificationDTO.setPoints(classificationDTO.getPoints() + WIN_POINTS);
+        } else if (Integer.parseInt(dto.getVisitorsScoreboard()) < Integer.parseInt(dto.getHomeScoreboard())) {
+            classificationDTO.setDefeats(classificationDTO.getDefeats() + DRAW_POINTS);
+        } else {
+            classificationDTO.setDraws(classificationDTO.getDraws() + DRAW_POINTS);
+            classificationDTO.setPoints(classificationDTO.getPoints() + DRAW_POINTS);
+        }
+        return classificationDTO;
+    }
+
 }

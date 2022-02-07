@@ -14,6 +14,8 @@ public class SoccerMainApllication {
 
     public static void main(String[] args) throws IOException {
 
+        Map<String,Integer> pointsClub = new HashMap<>();
+
         Set<ClassificationDTO> classification = new TreeSet<>(Comparator
                 .comparing(ClassificationDTO::getPoints, Comparator.reverseOrder()).thenComparing(ClassificationDTO::getNameClub));
 
@@ -21,8 +23,11 @@ public class SoccerMainApllication {
                 .skip(1)
                 .filter(StringUtils::isNotBlank) /*Removendo Linhas em brancas*/
                 .distinct() /* Removendo linhas repetidas */
-                .map(field -> /* Formatando linha para TimedTO */
-                        new ObjectMapper().convertValue(SoccerUtils.convertToMap(field.split(";")), ClubDTO.class)
+                .map(field -> /* Formatando linha para TimedTO */ {
+                        var dd = new ObjectMapper().convertValue(SoccerUtils.convertToMap(field.split(";")), ClubDTO.class);
+                        pointsClub.put(dd.getHome(), 0);
+                        return dd;
+                }
                 ).sorted(Comparator.comparing(ClubDTO::getDay, Comparator.reverseOrder()))/* Ordenando baseado no DataHora */
 
                 //Subdivida a estrutura de dados por time (mandante)
@@ -35,10 +40,17 @@ public class SoccerMainApllication {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    var classification1 = SoccerUtils.getClassification(dtos, key);
+                    dtos.forEach(dd ->  {
+                        var dd3 = SoccerUtils.getClassification(dd, dd.getVisitor());
+                        pointsClub.put(dd.getVisitor(), pointsClub.get(dd.getVisitor()) + dd3.getPoints());
+                    });
 
+                    pointsClub.put(key, pointsClub.get(key) + classification1.getPoints());
                     classification.add(SoccerUtils.getClassification(dtos, key));
                 });
 
+        classification.forEach(item -> item.setPoints(pointsClub.get(item.getNameClub())));
         var listClassification = SoccerUtils.convertToListString(classification, SoccerUtils.CLASSIFICATION_HEADER);
 
         Files.write(SoccerUtils.getPath("Classification"), listClassification, StandardCharsets.UTF_8);
